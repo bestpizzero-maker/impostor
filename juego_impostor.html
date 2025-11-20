@@ -1,1 +1,779 @@
-<!DOCTYPE html><html><body><h1>Juego del Impostor</h1></body></html>
+<!DOCTYPE html><html><body><h1>Juego del Impostor</h1></body></html><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juego del Impostor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #202744, #0b0d15);
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(15, 17, 30, 0.95);
+      border-radius: 18px;
+      padding: 20px 18px 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .app-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .app-subtitle {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(120, 120, 255, 0.15);
+      border: 1px solid rgba(120, 120, 255, 0.4);
+      color: #cfd2ff;
+      margin-bottom: 6px;
+    }
+
+    .section {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      opacity: 0.9;
+    }
+
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(4, 6, 15, 0.9);
+      color: #f5f5f5;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #8b9bff;
+      box-shadow: 0 0 0 1px rgba(139, 155, 255, 0.4);
+      background: rgba(7, 9, 20, 0.95);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+      max-height: 140px;
+      font-size: 0.85rem;
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.15s, opacity 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: linear-gradient(135deg, #5764ff, #9a78ff);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(118, 131, 255, 0.4);
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      color: #f0f0ff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #cfd2ff;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      opacity: 0.8;
+    }
+
+    .btn-ghost:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      opacity: 0.85;
+    }
+
+    .pill.selected {
+      border-color: #9a78ff;
+      background: rgba(154, 120, 255, 0.2);
+      opacity: 1;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.18), transparent);
+      margin: 10px 0 14px;
+    }
+
+    .screen {
+      display: none;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 18px;
+      background: radial-gradient(circle at top left, #2a2f53, #121323);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .card-main {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 6px 0 4px;
+      word-break: break-word;
+    }
+
+    .card-sub {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .player-info {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #5af58b;
+    }
+
+    .status-dot.warn {
+      background: #ffce5a;
+    }
+
+    .status-dot.danger {
+      background: #ff5a7c;
+    }
+
+    .small {
+      font-size: 0.8rem;
+      opacity: 0.75;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+
+    @media (max-width: 400px) {
+      .app {
+        padding: 16px 14px 14px;
+        border-radius: 14px;
+      }
+      .app-title {
+        font-size: 1.35rem;
+      }
+      .card-main {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="badge">Juego del Impostor</div>
+      <div class="app-title">¿Quién no sabe la palabra? 🕵️‍♂️</div>
+      <div class="app-subtitle">Pasá el celu, mirá tu rol y después discutan.</div>
+    </header>
+
+    <!-- PANTALLA DE CONFIGURACIÓN -->
+    <section id="setupScreen" class="screen active">
+      <div class="section">
+        <label for="playerCount">Cantidad de jugadores</label>
+        <input
+          type="number"
+          id="playerCount"
+          min="3"
+          max="20"
+          value="5"
+        />
+        <p class="hint">Recomendado: 4 a 10 jugadores.</p>
+      </div>
+
+      <div class="section">
+        <label>Categoría de palabras</label>
+        <div class="pill-row" id="categoryPills">
+          <!-- Se llenan por JS -->
+        </div>
+        <p class="hint">Podés elegir una categoría o dejar “Aleatorio”.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <label for="customWords">Lista de palabras personalizadas (opcional)</label>
+        <textarea
+          id="customWords"
+          placeholder="Ejemplo:&#10;Seguro&#10;Hospital&#10;Banco&#10;Oficina"
+        ></textarea>
+        <p class="hint">
+          Si escribís palabras acá (una por línea), se usarán en lugar de las del juego.
+        </p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" type="button" id="btnRandomQuick">
+          Ronda rápida 🔀
+        </button>
+        <button class="btn-primary" type="button" id="btnStartGame">
+          Iniciar juego ▶️
+        </button>
+      </div>
+
+      <div class="center mt-12 small">
+        <p>Regla básica: todos ven la palabra menos el impostor.</p>
+        <p>Hablen por turnos, den pistas… ¡y después voten quién miente!</p>
+      </div>
+    </section>
+
+    <!-- PANTALLA DE TARJETAS (ROL DEL JUGADOR) -->
+    <section id="cardScreen" class="screen">
+      <div class="center mt-4">
+        <div class="status-chip">
+          <span class="status-dot"></span>
+          <span id="chipText">Pasá el celu al jugador indicado</span>
+        </div>
+      </div>
+
+      <div class="card mt-8" id="cardContainer">
+        <div class="player-info" id="playerLabel">Jugador 1</div>
+        <div class="card-title" id="cardTitle">Tocá el botón para ver tu rol</div>
+        <div class="card-main" id="cardMain">👀</div>
+        <div class="card-sub" id="cardSub">No muestres esto a nadie.</div>
+      </div>
+
+      <div id="cardButtons" class="btn-row">
+        <button class="btn-primary" type="button" id="btnReveal">
+          Ver mi rol
+        </button>
+        <button class="btn-secondary" type="button" id="btnHide" style="display:none;">
+          Ocultar y pasar el celu ▶️
+        </button>
+      </div>
+
+      <div class="center mt-12">
+        <button class="btn-ghost" type="button" id="btnCancelGame">
+          ⬅️ Volver a empezar
+        </button>
+      </div>
+    </section>
+
+    <!-- PANTALLA DE DISCUSIÓN / RESULTADOS -->
+    <section id="discussionScreen" class="screen">
+      <div class="card mt-4">
+        <div class="card-title">Todos ya vieron su rol</div>
+        <div class="card-main" style="font-size: 1.3rem;">¡Momento de discutir! 💬</div>
+        <div class="card-sub">
+          Den pistas sin decir la palabra exacta y luego voten quién creen que es el impostor.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="center mt-8">
+          <button class="btn-primary" type="button" id="btnRevealSummary">
+            Mostrar solución 🧾
+          </button>
+        </div>
+
+        <div id="summaryBox" class="card mt-8" style="display:none;">
+          <div class="card-title">Solución de esta ronda</div>
+          <div class="card-main" id="summaryWord">Palabra: -</div>
+          <div class="card-sub" id="summaryImpostor">
+            El impostor fue el jugador X.
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row mt-12">
+        <button class="btn-secondary" type="button" id="btnNewRound">
+          Nueva ronda con mismos jugadores 🔁
+        </button>
+        <button class="btn-primary" type="button" id="btnBackHome">
+          Volver al inicio ⬅️
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ==========================
+    //   DATOS DEL JUEGO
+    // ==========================
+
+    const CATEGORIES = {
+      aleatorio: {
+        label: "Aleatorio",
+        words: []
+      },
+      lugares: {
+        label: "Lugares",
+        words: [
+          "Playa",
+          "Cine",
+          "Hospital",
+          "Banco",
+          "Escuela",
+          "Oficina",
+          "Aeropuerto",
+          "Supermercado",
+          "Restaurante",
+          "Estadio",
+          "Gimnasio",
+          "Museo",
+          "Hotel",
+          "Parque",
+          "Universidad"
+        ]
+      },
+      comida: {
+        label: "Comida",
+        words: [
+          "Pizza",
+          "Hamburguesa",
+          "Sushi",
+          "Taco",
+          "Ensalada",
+          "Asado",
+          "Empanada",
+          "Helado",
+          "Pastel",
+          "Sopa",
+          "Milanesa",
+          "Tortilla",
+          "Fideos",
+          "Chocolate",
+          "Sandwich"
+        ]
+      },
+      objetos: {
+        label: "Objetos",
+        words: [
+          "Teléfono",
+          "Teclado",
+          "Lámpara",
+          "Silla",
+          "Mesa",
+          "Libro",
+          "Billetera",
+          "Paraguas",
+          "Llavero",
+          "Auriculares",
+          "Cámara",
+          "Cuchillo",
+          "Reloj",
+          "Control remoto",
+          "Pelota"
+        ]
+      },
+      personas: {
+        label: "Personas / Roles",
+        words: [
+          "Doctor",
+          "Profesor",
+          "Policía",
+          "Arquitecto",
+          "Ingeniero",
+          "Cajero",
+          "Piloto",
+          "Chef",
+          "Futbolista",
+          "Enfermero",
+          "Programador",
+          "Vendedor",
+          "Cantante",
+          "Actor",
+          "Juez"
+        ]
+      },
+      entretenimiento: {
+        label: "Entretenimiento",
+        words: [
+          "Película de terror",
+          "Serie de comedia",
+          "Videojuego",
+          "Concierto",
+          "Fiesta",
+          "Cine 3D",
+          "Streaming",
+          "Reality show",
+          "Teatro",
+          "Podcast",
+          "Libro de misterio",
+          "Anime",
+          "Karaoke",
+          "Banda de rock",
+          "Torneo de eSports"
+        ]
+      },
+      animales: {
+        label: "Animales",
+        words: [
+          "Perro",
+          "Gato",
+          "Caballo",
+          "Vaca",
+          "León",
+          "Tigre",
+          "Elefante",
+          "Loro",
+          "Conejo",
+          "Delfín",
+          "Águila",
+          "Tortuga",
+          "Serpiente",
+          "Zorro",
+          "Oso panda"
+        ]
+      }
+    };
+
+    // Rellenar la categoría "aleatorio" con todas las demás
+    CATEGORIES.aleatorio.words = Object.keys(CATEGORIES)
+      .filter(k => k !== "aleatorio")
+      .flatMap(k => CATEGORIES[k].words);
+
+    // ==========================
+    //   ESTADO DEL JUEGO
+    // ==========================
+
+    const state = {
+      numPlayers: 5,
+      currentPlayer: 1,
+      impostor: null,
+      word: null,
+      categoryKey: "aleatorio",
+      customWords: []
+    };
+
+    // ==========================
+    //   ELEMENTOS DEL DOM
+    // ==========================
+
+    const setupScreen = document.getElementById("setupScreen");
+    const cardScreen = document.getElementById("cardScreen");
+    const discussionScreen = document.getElementById("discussionScreen");
+
+    const playerCountInput = document.getElementById("playerCount");
+    const categoryPillsContainer = document.getElementById("categoryPills");
+    const customWordsTextarea = document.getElementById("customWords");
+
+    const btnStartGame = document.getElementById("btnStartGame");
+    const btnRandomQuick = document.getElementById("btnRandomQuick");
+
+    const chipText = document.getElementById("chipText");
+    const playerLabel = document.getElementById("playerLabel");
+    const cardTitle = document.getElementById("cardTitle");
+    const cardMain = document.getElementById("cardMain");
+    const cardSub = document.getElementById("cardSub");
+    const btnReveal = document.getElementById("btnReveal");
+    const btnHide = document.getElementById("btnHide");
+    const btnCancelGame = document.getElementById("btnCancelGame");
+
+    const btnRevealSummary = document.getElementById("btnRevealSummary");
+    const summaryBox = document.getElementById("summaryBox");
+    const summaryWord = document.getElementById("summaryWord");
+    const summaryImpostor = document.getElementById("summaryImpostor");
+    const btnNewRound = document.getElementById("btnNewRound");
+    const btnBackHome = document.getElementById("btnBackHome");
+
+    // ==========================
+    //   FUNCIONES AUXILIARES
+    // ==========================
+
+    function switchScreen(screen) {
+      setupScreen.classList.remove("active");
+      cardScreen.classList.remove("active");
+      discussionScreen.classList.remove("active");
+
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function initCategoryPills() {
+      categoryPillsContainer.innerHTML = "";
+      Object.entries(CATEGORIES).forEach(([key, data]) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "pill" + (key === "aleatorio" ? " selected" : "");
+        pill.textContent = data.label;
+        pill.dataset.key = key;
+        pill.addEventListener("click", () => {
+          document
+            .querySelectorAll("#categoryPills .pill")
+            .forEach(p => p.classList.remove("selected"));
+          pill.classList.add("selected");
+          state.categoryKey = key;
+        });
+        categoryPillsContainer.appendChild(pill);
+      });
+    }
+
+    function getCustomWords() {
+      const text = customWordsTextarea.value.trim();
+      if (!text) return [];
+      return text
+        .split("
+")
+        .map(w => w.trim())
+        .filter(w => w.length > 0);
+    }
+
+    function pickRandom(arr) {
+      if (!arr || arr.length === 0) return null;
+      const idx = Math.floor(Math.random() * arr.length);
+      return arr[idx];
+    }
+
+    function validatePlayers() {
+      const n = parseInt(playerCountInput.value, 10);
+      if (isNaN(n) || n < 3) {
+        alert("Necesitás al menos 3 jugadores para que tenga gracia 😄");
+        return null;
+      }
+      if (n > 20) {
+        alert("Máximo 20 jugadores para no volverse locos 😅");
+        return null;
+      }
+      return n;
+    }
+
+    function prepareRound(keepPlayers = false) {
+      const custom = getCustomWords();
+      state.customWords = custom;
+
+      if (!keepPlayers) {
+        const n = validatePlayers();
+        if (!n) return false;
+        state.numPlayers = n;
+      }
+
+      const wordPool =
+        custom.length > 0 ? custom : CATEGORIES[state.categoryKey].words;
+
+      if (!wordPool || wordPool.length === 0) {
+        alert("No hay palabras disponibles para esta categoría.");
+        return false;
+      }
+
+      state.word = pickRandom(wordPool);
+      state.impostor =
+        Math.floor(Math.random() * state.numPlayers) + 1; // 1..numPlayers
+      state.currentPlayer = 1;
+      summaryBox.style.display = "none";
+
+      setupCardScreenForNextPlayer(false);
+      return true;
+    }
+
+    function setupCardScreenForNextPlayer(isFromHide) {
+      const n = state.numPlayers;
+      const i = state.currentPlayer;
+
+      if (i > n) {
+        // Todos vieron su rol
+        switchScreen(discussionScreen);
+        chipText.textContent = "Todos tienen su rol";
+        return;
+      }
+
+      switchScreen(cardScreen);
+
+      chipText.textContent = `Pasá el celu al Jugador ${i} (mirá solo vos)`;
+      playerLabel.textContent = `Jugador ${i}`;
+
+      // Estado inicial: no se mostró rol todavía
+      cardTitle.textContent = "Tocá el botón para ver tu rol";
+      cardMain.textContent = "👀";
+      cardSub.textContent = "No muestres esto a nadie.";
+      btnReveal.style.display = "inline-flex";
+      btnHide.style.display = "none";
+    }
+
+    function revealRole() {
+      const i = state.currentPlayer;
+      const isImpostor = i === state.impostor;
+
+      cardTitle.textContent = isImpostor
+        ? "Sos el IMPOSTOR 🤫"
+        : "Tu palabra secreta es:";
+      cardMain.textContent = isImpostor ? "No sabés la palabra" : state.word;
+      cardSub.textContent = isImpostor
+        ? "Escuchá bien las pistas y no te delates."
+        : "Pensá en pistas sutiles, sin decir la palabra exacta.";
+
+      btnReveal.style.display = "none";
+      btnHide.style.display = "inline-flex";
+    }
+
+    function hideAndNext() {
+      // Pasar al siguiente jugador
+      state.currentPlayer += 1;
+      setupCardScreenForNextPlayer(true);
+    }
+
+    function resetToHome() {
+      switchScreen(setupScreen);
+    }
+
+    function showSummary() {
+      summaryWord.textContent = `Palabra: ${state.word || "-"}`;
+      summaryImpostor.textContent = `El impostor fue el Jugador ${state.impostor}.`;
+      summaryBox.style.display = "block";
+    }
+
+    // ==========================
+    //   EVENTOS
+    // ==========================
+
+    btnStartGame.addEventListener("click", () => {
+      if (prepareRound(false)) {
+        // Ya se hizo el switch a cardScreen
+      }
+    });
+
+    btnRandomQuick.addEventListener("click", () => {
+      // Quick: aleatorio de todo, jugadores como estén cargados
+      state.categoryKey = "aleatorio";
+      document
+        .querySelectorAll("#categoryPills .pill")
+        .forEach(p => p.classList.remove("selected"));
+      const pill = document.querySelector('#categoryPills .pill[data-key="aleatorio"]');
+      if (pill) pill.classList.add("selected");
+      if (prepareRound(false)) {
+        // listo
+      }
+    });
+
+    btnReveal.addEventListener("click", revealRole);
+    btnHide.addEventListener("click", hideAndNext);
+    btnCancelGame.addEventListener("click", resetToHome);
+
+    btnRevealSummary.addEventListener("click", showSummary);
+
+    btnNewRound.addEventListener("click", () => {
+      // Misma cantidad de jugadores, mismas config
+      if (prepareRound(true)) {
+        // Va a cardScreen
+      }
+    });
+
+    btnBackHome.addEventListener("click", resetToHome);
+
+    // Inicializar categorías al cargar
+    initCategoryPills();
+  </script>
+</body>
+</html>
